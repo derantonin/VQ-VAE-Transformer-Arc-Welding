@@ -175,7 +175,7 @@ if __name__ == '__main__':
     parser.add_argument('--wandb-project', type=str, help='Weights and Bias project')
     
     
-    parser.add_argument('--vqvae-model', type=str, help='Model URL for wandb or Path', default="model_checkpoints/VQ-VAE-Patch/model-z2xyghpx.ckpt")
+    parser.add_argument('--vqvae-model', type=str, help='Model URL for wandb or Path', default="/model_checkpoints/VQ-VAE-Patch/VQ-VAE-Patch-asimow-best.ckpt")
 
     parser.add_argument('--classification-only', action=argparse.BooleanOptionalAction)
     parser.add_argument('--no-early-stopping', action=argparse.BooleanOptionalAction)

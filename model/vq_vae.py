@@ -40,7 +40,7 @@ class ResBlockLinear(nn.Module):
 
 
 class VectorQuantizedVAE(Autoencoder):
-    def __init__(self, wandb_logger, decoder_type: str, input_dim: int, hidden_dim: int, num_embeddings: int, embedding_dim: int, 
+    def __init__(self, decoder_type: str, input_dim: int, hidden_dim: int, num_embeddings: int, embedding_dim: int, 
                  n_resblocks: int, learning_rate: float, seq_len: int=200, dropout_p: float=0.1):
         """
         A PyTorch Lightning module implementing a Vector Quantized Variational Autoencoder (VQ-VAE).
@@ -55,11 +55,11 @@ class VectorQuantizedVAE(Autoencoder):
             learning_rate (float): The learning rate to use for training.
             seq_len (int, optional): The length of the input sequence. Defaults to 200.
         """
-        super().__init__(wandb_logger=wandb_logger, hidden_dim=hidden_dim, input_dim=input_dim, num_embeddings=num_embeddings, 
+        super().__init__(hidden_dim=hidden_dim, input_dim=input_dim, num_embeddings=num_embeddings, 
                          embedding_dim=embedding_dim, n_resblocks=n_resblocks, learning_rate=learning_rate, seq_len=seq_len, dropout_p=dropout_p)
 
         self.enc_out_len = self.compute_out_len(seq_len=seq_len)
-        # print(f"Output length: {self.enc_out_len}")
+        #print(f"Output length: {self.enc_out_len}")
         self.encoder = nn.Sequential(
             nn.Conv1d(input_dim, hidden_dim, kernel_size=7, stride=2, padding=3),
             nn.BatchNorm1d(hidden_dim),
@@ -131,7 +131,17 @@ class VectorQuantizedVAE(Autoencoder):
         x = x.permute(0, 2, 1)
 
         z_e = self.encoder(x)
+        
+        #
+        z_e = z_e.permute(0,2,1)
+        #
+
         embedding_loss, z_q, perplexity, _, _ = self.vector_quantization(z_e)
+        
+        #
+        z_q = z_q.permute(0,2,1)
+        #
+
         if self.decoder_type == "Linear":
             z_q = z_q.reshape(z_q.shape[0], z_q.shape[1] * z_q.shape[2])
         x_hat = self.decoder(z_q)

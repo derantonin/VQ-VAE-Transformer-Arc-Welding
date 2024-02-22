@@ -27,8 +27,7 @@ class MyClassificationDataset(Dataset):
 
     def __getitem__(self, idx):
         return torch.tensor(self.data[idx], dtype=torch.float32), torch.tensor(self.labels[idx], dtype=torch.long)
-    
-    
+     
 class MyClassificationDatasetIDs(Dataset):
     def __init__(self, data: np.ndarray, labels: np.ndarray):
         """
@@ -52,7 +51,6 @@ class MyClassificationDatasetIDs(Dataset):
         x = torch.tensor(self.data[idx], dtype=torch.long)
         x = x.reshape(-1)
         return x, torch.tensor(self.labels[idx], dtype=torch.long)
-    
     
 class MyReconstructionDataset(Dataset):
     def __init__(self, data: np.ndarray, y: Optional[np.ndarray] = None):

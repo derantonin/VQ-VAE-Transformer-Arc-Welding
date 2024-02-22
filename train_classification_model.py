@@ -156,6 +156,8 @@ def main(hparams):
     else: 
         logger.experiment.log_metrics(logdict)
 
+    return model, data_module
+
 
 
 if __name__ == '__main__':

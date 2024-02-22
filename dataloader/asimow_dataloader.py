@@ -384,8 +384,7 @@ def load_npy_data(config: argparse.Namespace, val_ids: list[DataSplitId], test_i
 
 
 
-    data_module = ASIMoWDataModule(task=task, batch_size=config.batch_size, n_cycles=config.n_cycles,
-                                   model_id=0, val_data_ids=val_ids, test_data_ids=test_ids)
+    data_module = ASIMoWDataModule(task=task, batch_size=config.batch_size, n_cycles=config.n_cycles, val_data_ids=val_ids, test_data_ids=test_ids)
 
     data_module.setup('fit')
 
