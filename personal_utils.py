@@ -85,13 +85,15 @@ def get_models_and_files(mode: str):
         complete_q_indices = np.load("created_files/train_loader_q_indices.npy")
     elif mode == "VQ-VAE-Patch":
         mlp_path = "my_trained_mlp_on_patch.ckpt"
-        vqvae_path = "VQ-VAE-Patch-best-v2.ckpt"
-        my_trained_mlp = MLP(input_size=16, output_size=2, in_dim=64, hidden_sizes=512)
-        my_trained_mlp.load_state_dict(torch.load(mlp_path))
-        my_trained_mlp.eval()
+        vqvae_path = "VQ-VAE-Patch-best-v5.ckpt"
+        # my_trained_mlp = MLP(input_size=16, output_size=2, in_dim=64, hidden_sizes=512)
+        my_trained_mlp = None
+        # my_trained_mlp.load_state_dict(torch.load(mlp_path))
+        # my_trained_mlp.eval()
         model, hparams = get_model_patch("VQ-VAE-Patch", vqvae_path)
         model.eval()
-        codebook = torch.round(model.vector_quantization.embedding.weight.data, decimals=3)
+        codebook=None
+        # codebook = torch.round(model.vector_quantization.embedding.weight.data, decimals=3)
         complete_q_tensor = torch.round(torch.tensor(np.load("created_files/patch_train_loader_q_embeddings.npy"), dtype=torch.float32), decimals=3)
         complete_q_indices = np.load("created_files/patch_train_loader_q_indices.npy")
     elif mode == "VQ-VAE-Yannik-Patch":
