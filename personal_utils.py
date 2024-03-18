@@ -73,7 +73,7 @@ def get_models_and_files(mode: str):
         raise ValueError("mode must be one of 'VQ-VAE', 'VQ-VAE-Patch', 'VQ-VAE-Yannik-Patch'")
 
     if mode == "VQ-VAE":
-        mlp_path = "my_trained_mlp.ckpt"
+        mlp_path = "MLPs/my_trained_mlp.ckpt"
         vqvae_path = "VQ-VAE-asimow-best.ckpt"
         my_trained_mlp = MLP(input_size=26, output_size=2, in_dim=32, hidden_sizes=512)
         my_trained_mlp.load_state_dict(torch.load(mlp_path))
@@ -81,32 +81,32 @@ def get_models_and_files(mode: str):
         model, hparams = get_model("VQ-VAE", vqvae_path)
         model.eval()
         codebook = torch.round(model.vector_quantization.embedding.weight.data, decimals=3)
-        complete_q_tensor = torch.round(torch.tensor(np.load("created_files/train_loader_q_embeddings.npy"), dtype=torch.float32), decimals=3)
-        complete_q_indices = np.load("created_files/train_loader_q_indices.npy")
+        complete_q_tensor = torch.round(torch.tensor(np.load("created_files/q_emb_v1.npy"), dtype=torch.float32), decimals=3)
+        complete_q_indices = np.load("created_files/q_ind_v1.npy")
     elif mode == "VQ-VAE-Patch":
-        mlp_path = "my_trained_mlp_on_patch.ckpt"
-        vqvae_path = "VQ-VAE-Patch-best-v5.ckpt"
-        # my_trained_mlp = MLP(input_size=16, output_size=2, in_dim=64, hidden_sizes=512)
-        my_trained_mlp = None
-        # my_trained_mlp.load_state_dict(torch.load(mlp_path))
-        # my_trained_mlp.eval()
+        mlp_path = "MLPs/my_trained_mlp_on_patch_v1.ckpt"
+        vqvae_path = "VQ-VAE-Patch-best-v1.ckpt"
+        my_trained_mlp = MLP(input_size=16, output_size=2, in_dim=16, hidden_sizes=512)
+        # my_trained_mlp = None
+        my_trained_mlp.load_state_dict(torch.load(mlp_path))
+        my_trained_mlp.eval()
         model, hparams = get_model_patch("VQ-VAE-Patch", vqvae_path)
         model.eval()
         codebook=None
         # codebook = torch.round(model.vector_quantization.embedding.weight.data, decimals=3)
-        complete_q_tensor = torch.round(torch.tensor(np.load("created_files/patch_train_loader_q_embeddings.npy"), dtype=torch.float32), decimals=3)
-        complete_q_indices = np.load("created_files/patch_train_loader_q_indices.npy")
+        complete_q_tensor = torch.round(torch.tensor(np.load("created_files/patch_q_emb_v1.npy"), dtype=torch.float32), decimals=3)
+        complete_q_indices = np.load("created_files/patch_q_ind_v1.npy")
     elif mode == "VQ-VAE-Yannik-Patch":
-        mlp_path = "my_trained_mlp_on_yannik_patch.ckpt"
-        vqvae_path = "vq_vae_patch_best.ckpt"
+        mlp_path = "MLPs/my_trained_mlp_on_y_patch.ckpt"
+        vqvae_path = "Y-VQ-VAE-Patch-best.ckpt"
         my_trained_mlp = MLP(input_size=16, output_size=2, in_dim=32, hidden_sizes=512)
         my_trained_mlp.load_state_dict(torch.load(mlp_path))
         my_trained_mlp.eval()
         model, hparams = get_model_patch("VQ-VAE-Patch", vqvae_path)
         model.eval()
         codebook = torch.round(model.vector_quantization.embedding.weight.data, decimals=3)
-        complete_q_tensor = torch.round(torch.tensor(np.load("created_files/yannik_patch_train_loader_q_embeddings.npy"), dtype=torch.float32), decimals=3)
-        complete_q_indices = np.load("created_files/yannik_patch_train_loader_q_indices.npy")
+        complete_q_tensor = torch.round(torch.tensor(np.load("created_files/y_patch_q_emb.npy"), dtype=torch.float32), decimals=3)
+        complete_q_indices = np.load("created_files/y_patch_q_ind.npy")
     return my_trained_mlp, model, codebook, complete_q_tensor, complete_q_indices, hparams
     
 def get_dataloaders_and_datasets():
@@ -267,9 +267,14 @@ def plot_reconstruction_difference(reconstructed_original, reconstructed_changed
     plt.show()
     return difference
 
-def alter_q_data(q_data, original_data, alter_range, alter_embedding, model, label, plot_original=False):
+def alter_q_data(q_data, original_data, alter_range, alter_embedding, model, model_hparams, label, plot_original=False):
+    if 'use_improved_vq' not in model_hparams: model_hparams['use_improved_vq'] = None
+    if model_hparams["use_improved_vq"]:
+        codebook = torch.round(model.vector_quantization.vq.codebooks[0], decimals=3)
+    else:
+        codebook = torch.round(model.vector_quantization.embedding.weight.data, decimals=3)
     changed_q_data = q_data.clone().detach()
-    codebook = torch.round(model.vector_quantization.embedding.weight.data, decimals=3)
+    # codebook = torch.round(model.vector_quantization.embedding.weight.data, decimals=3)
     # replacing four embeddings with least common Codebook Entry number 165
     for i in alter_range:
         changed_q_data[i] = codebook[alter_embedding] 
