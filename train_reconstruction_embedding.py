@@ -200,8 +200,8 @@ def main(hparams):
 
     trainer.test(model=model, datamodule=data_module)
     
-    classify_latent_space(latent_model=model, logger=logger, val_ids=val_ids, test_ids=test_ids, n_cycles=1, model_name=model_name, 
-                            dataset=dataset, classification_model="MLP", learning_rate=learning_rate, clipping_value=clipping_value)
+    # classify_latent_space(latent_model=model, logger=logger, val_ids=val_ids, test_ids=test_ids, n_cycles=1, model_name=model_name, 
+    #                         dataset=dataset, classification_model="MLP", learning_rate=learning_rate, clipping_value=clipping_value)
     
       
 
