@@ -40,7 +40,7 @@ class ResBlockLinear(nn.Module):
 
 
 class VectorQuantizedVAE(Autoencoder):
-    def __init__(self, decoder_type: str, input_dim: int, hidden_dim: int, num_embeddings: int, embedding_dim: int, 
+    def __init__(self, logger, decoder_type: str, input_dim: int, hidden_dim: int, num_embeddings: int, embedding_dim: int, 
                  n_resblocks: int, learning_rate: float, seq_len: int=200, dropout_p: float=0.1):
         """
         A PyTorch Lightning module implementing a Vector Quantized Variational Autoencoder (VQ-VAE).

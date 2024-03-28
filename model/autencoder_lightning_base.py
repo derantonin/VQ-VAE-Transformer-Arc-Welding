@@ -22,7 +22,6 @@ class Autoencoder(pl.LightningModule):
             dropout_p (float, optional): Dropout probability. Defaults to 0.1.
         """
         super().__init__()
-
         self.learning_rate = learning_rate
         self.dropout_p = dropout_p
         self.n_resblocks = n_resblocks
